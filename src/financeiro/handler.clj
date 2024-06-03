@@ -11,7 +11,7 @@
     [financeiro.db :as db]
     ;[financeiro.transacoes :as transacoes]
     ))
-;;
+;;curl -X POST -d '{"valor": 700, "tipo": "despesa"}' \ -H "Content-Type: application/json" localhost:3000/transacoes
 
 ;
 (defn como-json [conteudo & [status]]
