@@ -24,7 +24,7 @@
   ;rotas tratadas:
   (GET "/" [] "Oi, mundo!") ;raiz
   (GET "/saldo" [] (saldo-como-json)) ;saldo
-  (POST "/transacoes" [] {});transações
+  (POST "/transacoes" requisicao (db/registrar));transações
 
 
   ;ao acessar uma rota não tratada
