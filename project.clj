@@ -19,4 +19,5 @@
          :plugins [[lein-midje "3.2.1"]
                   [lein-cloverage "1.2.4"]]}}
 ; onde ficam os testes
-:test-paths ["test/unitarios" "test/aceitacao"])
+;:test-paths ["test/unitarios" "test/aceitacao"]
+)
