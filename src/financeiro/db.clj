@@ -13,12 +13,12 @@
 (declare register) ;declaração sem implementação
 
 (defn registrar [transacao] ;atualiza o átomo, incluindo a transação na coleção
-     (let [colecao-atualizada (swap! registros conj transacao)]
+    (let [colecao-atualizada (swap! registros conj transacao)]
         (merge transacao {:id (count colecao-atualizada)})))
 
 
 ;;limpa os registros
-(defn limpar [] (reset! registros[])) 
+(defn limpar [] (reset! registros[]))
 ;;
 
 ;;determina se é despesa ou não (se deve adicionar ou subtrair)
