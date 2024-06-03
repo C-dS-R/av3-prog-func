@@ -25,7 +25,7 @@
 (defroutes app-routes ;é uma macro de compojure.core
   ;rotas tratadas:
   (GET "/" [] "Oi, mundo!") ;raiz
-  (GET "/saldo" [] (como-json {:saldo db/saldo})) ;saldo
+  (GET "/saldo" [] (como-json {:saldo (db/saldo)})) ;saldo
   (POST "/transacoes" requisicao (-> ;transações
     (db/registrar (:body requisicao))
     (como-json 201)))
