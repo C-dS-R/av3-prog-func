@@ -13,7 +13,7 @@
 (declare register) ;declaração sem implementação
 
 (defn registrar [transacao] ;atualiza o átomo, incluindo a transação na coleção
-     (let [colecao-atualizada (swap? registros conj transacao)]
+     (let [colecao-atualizada (swap! registros conj transacao)]
         (merge transacao {:id (count colecao-atualizada)})))
 
 
