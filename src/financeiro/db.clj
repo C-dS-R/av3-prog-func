@@ -39,3 +39,7 @@
 ;;
 
 (defn saldo[](reduce calcular 0 @registros))
+
+;
+(defn transacoes-do-tipo [tipo] '())
+;
