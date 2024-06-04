@@ -30,11 +30,10 @@
     (db/registrar (:body requisicao))
     (como-json 201)))
 
+  (GET "/transacoes" [] (como-json {:transacoes (db/transacoes)}))
 
   ;ao acessar uma rota não tratada
   (route/not-found "Recurso n encontrado")
-
-  (GET "/transacoes" [] (como-json {:transacoes (db/transacoes)}))
 )
 ;;
 
