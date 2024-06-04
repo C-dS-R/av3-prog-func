@@ -5,17 +5,19 @@
     [compojure.route :as route]
     [cheshire.core :as json]
     [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
+    [ring.middleware.json :refer [wrap-json-body]]
 
     ;;NS
     [financeiro.db :as db]
+    ;[financeiro.transacoes :as transacoes]
     ))
-;;
-
+;;curl -X POST -d '{"valor": 700, "tipo": "despesa"}' \ -H "Content-Type: application/json" localhost:3000/transacoes
 
 ;
-(defn saldo-como-json []
-  {:headers {"Content-Type" "application/json; charset=utf-8"}
-   :body (json/generate-string {:saldo 0})})
+(defn como-json [conteudo & [status]]
+  {:status (or status 200)
+    :headers {"Content-Type" "application/json; charset=utf-8"}
+   :body (json/generate-string conteudo)})
 ;;
 
 
@@ -23,17 +25,22 @@
 (defroutes app-routes ;é uma macro de compojure.core
   ;rotas tratadas:
   (GET "/" [] "Oi, mundo!") ;raiz
-  (GET "/saldo" [] (saldo-como-json)) ;saldo
-  (POST "/transacoes" [] {});transações
+  (GET "/saldo" [] (como-json {:saldo (db/saldo)})) ;saldo
+  (POST "/transacoes" requisicao (-> ;transações
+    (db/registrar (:body requisicao))
+    (como-json 201)))
 
+  (GET "/transacoes" [] (como-json {:transacoes (db/transacoes)}))
 
   ;ao acessar uma rota não tratada
-  (route/not-found "Recurso n encontrado"))
+  (route/not-found "Recurso n encontrado")
+)
 ;;
 
 
 
 ;; APP
 (def app
-  (wrap-defaults app-routes api-defaults))
+  (-> (wrap-defaults app-routes api-defaults)
+  (wrap-json-body{:keywords? true :bigdecimals? true})))
 ;;
