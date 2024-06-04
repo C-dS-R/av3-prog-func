@@ -1,8 +1,11 @@
 ;; NAMESPACE
 (ns ui.acoes
-    (:require [clojure.tools.cli :refer [parse-opts]]
-        [cheshire.core :refer [parse-string]]
+    (:require 
+		;[clojure.tools.cli :refer [parse-opts]]
+        ;[cheshire.core :refer [parse-string]]
         [clj-http.client :as http]
+
+		[ui.auxiliar :refer :all]
         )
 )
 ;;
@@ -14,19 +17,30 @@
 (defn cadastrarTransacao []
 	(limparTerminal) ;limpa terminal
 
-	(println "(DEBUG) cadastrar transacao"))
+	(println "Valor: ")
+	(def vl (int(read)))
+	(println "Tipo: ")
+	(def tp (read))
+
+
+	(let [transacao (:body (http/post (str "http://localhost:" portaPadrao "/transacao")
+    {:form-params {:valor vl :tipo tp }}
+	))]
+		
+	)
+	)
 ;;
 
 
 ;
 (defn exibirTransacoes []
 	(limparTerminal) ;limpa terminal
+	(println "(DEBUG) exibir transacoes")
 
-    (print (:body (http-client/get "LINK!!"
-    {:query-params {
-      "q" "PARAM!!" "apiKey" "CHAVE!!" }})))
-
-	(println "(DEBUG) exibir transacoes"))
+    ;; (print (:body (http/get (str "localhost:" portaPadrao "/transacao")
+    ;; {:query-params {"valor" valor "apiKey" "CHAVE!!" }}
+	;; )))
+	)
 ;;
 
 

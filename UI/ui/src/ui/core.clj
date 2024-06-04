@@ -3,6 +3,7 @@
 	(:gen-class)
 	(:require
 		[ui.acoes :refer :all]
+		[ui.interfaceamento :refer :all]
 		[ui.auxiliar :refer [limparTerminal]]))
 ;;
 
