@@ -1,9 +1,16 @@
 ;; NAMESPACE
-(ns ui.acoes)
+(ns ui.acoes
+    (:require [clojure.tools.cli :refer [parse-opts]]
+        [cheshire.core :refer [parse-string]]
+        [clj-http.client :as http]
+        )
+)
 ;;
 
+;;infos (TODO: REFATORAR)
+(def portaPadrao 3000)
 
-;
+;;ACOES
 (defn cadastrarTransacao []
 	(limparTerminal) ;limpa terminal
 
@@ -14,6 +21,10 @@
 ;
 (defn exibirTransacoes []
 	(limparTerminal) ;limpa terminal
+
+    (print (:body (http-client/get "LINK!!"
+    {:query-params {
+      "q" "PARAM!!" "apiKey" "CHAVE!!" }})))
 
 	(println "(DEBUG) exibir transacoes"))
 ;;
