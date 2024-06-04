@@ -8,7 +8,7 @@
 ;;
 
 
-(defn transacoes [] @registros)
+(defn transacao [] @registros)
 
 (declare register) ;declaração sem implementação
 

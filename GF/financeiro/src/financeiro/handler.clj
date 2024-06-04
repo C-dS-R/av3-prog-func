@@ -9,9 +9,8 @@
 
     ;;NS
     [financeiro.db :as db]
-    ;[financeiro.transacoes :as transacoes]
     ))
-;;curl -X POST -d '{"valor": 700, "tipo": "despesa"}' \ -H "Content-Type: application/json" localhost:3000/transacoes
+;;curl -X POST -d '{"valor": 700, "tipo": "despesa"}' \ -H "Content-Type: application/json" localhost:3000/transacao
 
 ;
 (defn como-json [conteudo & [status]]
@@ -26,11 +25,11 @@
   ;rotas tratadas:
   (GET "/" [] "Oi, mundo!") ;raiz
   (GET "/saldo" [] (como-json {:saldo (db/saldo)})) ;saldo
-  (POST "/transacoes" requisicao (-> ;transações
+  (POST "/transacao" requisicao (-> ;transações
     (db/registrar (:body requisicao))
     (como-json 201)))
 
-  (GET "/transacoes" [] (como-json {:transacoes (db/transacoes)}))
+  (GET "/transacao" [] (como-json {:transacao (db/transacao)}))
 
   ;ao acessar uma rota não tratada
   (route/not-found "Recurso n encontrado")
