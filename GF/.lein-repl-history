@@ -1,0 +1,3 @@
+ring server
+lein ring server
+exit
