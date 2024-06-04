@@ -17,7 +17,7 @@
 (defn como-json [conteudo & [status]]
   {:status (or status 200)
     :headers {"Content-Type" "application/json; charset=utf-8"}
-   :body (json/generate-string conteudo)})
+  :body (json/generate-string conteudo)})
 ;;
 
 
