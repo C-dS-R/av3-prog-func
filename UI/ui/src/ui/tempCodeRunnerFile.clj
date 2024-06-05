@@ -1,1 +1,0 @@
-(nth transacao 1)

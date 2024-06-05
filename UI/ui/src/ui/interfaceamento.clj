@@ -28,7 +28,6 @@ Acao a realizar:")
 			)
 		)
 	)
-	
 	;;uma vez finalizado, volta para o comeco
 	(recur)
 	)
