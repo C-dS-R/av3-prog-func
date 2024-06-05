@@ -3,11 +3,11 @@
     (:require
 		;;dependencias
 		[clojure.tools.cli :refer [parse-opts]]
-        [cheshire.core :refer [parse-string generate-string]]
-        [clj-http.client :as http]
+        	[cheshire.core :refer :all]
+        	[clj-http.client :as http]
 
 		;;nativas
-        [clojure.string :refer [split]]
+        	[clojure.string :refer [split]]
 
 		;;aux
 		[ui.auxiliar :refer :all]
@@ -70,14 +70,27 @@
 ;;
 
 
+(defn format-block [block]
+  (str "Index: " (:index block) "\n"
+       "Data: " (:data block) "\n"
+       "Previous Hash: " (:previous-hash block) "\n"
+       "Nonce: " (:nonce block) "\n"
+       "Hash: " (:hash block) "\n"))
 ;
-(defn exibirBlockchain [] ;retorna infos do bloco
-	(limparTerminal) ;limpa terminal
-	(println "(DEBUG) exibir blockchain"))
-	(let [blockchain (:body (http/get (str "http://localhost:" portaBC "/chain")
-			{:query-params {:valor :tipo} :content-type :json}))]
-		(print blockchain))
-	
+(defn exibirBlockchain []
+  (limparTerminal) ; Limpa terminal
+  (println "(DEBUG) exibir blockchain")
+  (let [response (http/get (str "http://localhost:" portaBC "/chain")
+                           {:content-type :json})
+        blockchain (parse-string (:body response) true)]
+    (doseq [block blockchain]
+      (println (format-block block))
+      (println "-----------------------------"))))
 
-
-;;
+;; (defn exibirBlockchain [] ;retorna infos do bloco
+;; 	(limparTerminal) ;limpa terminal
+;; 	(println "(DEBUG) exibir blockchain")
+;; 	(let [blockchain (:body (http/get (str "http://localhost:" portaBC "/chain")
+;; 			{:query-params {:valor :tipo} :content-type :json}))]
+;; 		(print blockchain))
+;; )
