@@ -1,30 +1,26 @@
 (ns blockchain.bm
   (:import (java.security MessageDigest)))
 
-;;define o uso de sha256
 (defn sha256 [data]
   (let [digest (MessageDigest/getInstance "SHA-256")]
     (.digest digest (.getBytes data "UTF-8"))))
 
-;;converte bytes para
-(defn bytesToHex [bytes]
+(defn bytes-to-hex [bytes]
   (apply str (map (partial format "%02x") bytes)))
 
-(defn calculateHash [block]
-  (let [data (str (:index block)
-                  (:data block)
-                  (:previous-hash block)
-                  (:nonce block))]
-    (-> data sha256 bytesToHex)))
+(defn calculate-hash [index data prev nonce]
+  (let [data (str index
+                  data
+                  prev
+                  nonce)]
+    (-> data sha256 bytes-to-hex)))
 
-(defn validHash? [hash]
+(defn valid-hash? [hash]
   (= (subs hash 0 4) "0000"))
 
-(defn mineBlock [block]
-  (loop [nonce 0]
-    (let [block-data (assoc @block :nonce nonce)
-          hash (calculateHash block-data)]
-      (if (validHash? hash)
-        (do (swap! block assoc :nonce nonce :hash hash)
-            @block)
-        (recur (inc nonce))))))
+(defn mineBlock [index data prev-hash]
+  (loop [counter 0]
+    (let [hash (calculate-hash index data prev-hash counter)]
+      (if (valid-hash? hash)
+        [counter hash]
+        (recur (inc counter))))))
