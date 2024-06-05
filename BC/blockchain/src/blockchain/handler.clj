@@ -6,72 +6,74 @@
             [ring.middleware.json :refer [wrap-json-body]]
             [clojure.walk :as walk]
             [blockchain.db :as db]
-            [blockchain.bm :as bm]
-            ))
+            [blockchain.bm :as bm]))
 
-(defn como-json [conteudo & [status]]
+(defn as-json [content & [status]]
   {:status (or status 200)
-    :headers {"Content-Type" "application/json; charset=utf-8"}
-   :body (json/generate-string conteudo)})
+   :headers {"Content-Type" "application/json; charset=utf-8"}
+   :body (json/generate-string content)})
 
-(def blockchain (vector (db/createGenesis)))
+(def blockchain (atom [(db/create-genesis)]))
 
-(def transactions (atom[]))
+(def transactions (atom []))
 
-(defn addTransaction [transaction] ;atualiza o átomo, incluindo a transação na coleção
-    (let [colecao-atualizada (swap! transactions conj transaction)]
-        (merge transaction {:id (count colecao-atualizada)})))
+(defn add-transaction [transaction]
+  (swap! transactions conj transaction)
+  {:status 201 :body "Transaction added"})
 
-(defn getLatestBlock[]
-    (def latestBlock (nth blockchain (dec(count blockchain))))
-    latestBlock)
+(defn get-latest-block []
+  (last @blockchain))
 
+(defn create-new-block [calcNonce calcHash]
+  (let [latest (get-latest-block)
+        trans (walk/stringify-keys @transactions)
+        index (inc (:index latest))
+        data (str trans)  
+        prev-hash (:hash latest)
+        nonce calcNonce
+        hash calcHash] 
+        (swap! blockchain conj (db/create-block index data prev-hash nonce hash))
+        {:status 201 :body "Block added"}))
 
-(defn createNewBlock[]
-    (def latest (getLatestBlock))
-    (def trans (walk/stringify-keys transactions))
-    (def index (count blockchain))
-    (def data (str (:data @latest) trans))
-    (def prev-hash (:hash @latest))
-    (def nonce 0)
-    (def selfhash "1111")
-    (def newblock (db/createBlock index data prev-hash nonce selfhash))
-    (def newblock (bm/mineBlock newblock))
-    (def blockchain(conj blockchain newblock))
-    (print @newblock)
-)
+(def noncey 12345)
+(def hashy "0000123412341234")
 
+(defn noncer[index data prevHash]
+  (bm/mineBlock index data prevHash))
+(defn hasher[index data prevHash nonce]
+  (bm/calculate-hash index data prevHash nonce))
+
+;index data prevHash
 (defroutes app-routes
   (GET "/" [] "Oi, mundo!")
-  (GET "/chain" [] (print blockchain))
-  (POST "/transaction" req
-    (addTransaction (:body req))
-    {:status 201 :body "Transaction added"})
-  (POST "/mine" []
-    {:status 201 :body (createNewBlock)})
+  (GET "/chain" [] (as-json @blockchain))
+  (GET "/mine" [] (let [nonce noncey hash hashy] (as-json {:nonce nonce :hash hash})))
+  (GET "/mineTest" [] (let[latest (get-latest-block) 
+                      trans (walk/stringify-keys @transactions)
+                      index (inc (:index latest))
+                      data (str trans)
+                      prev-hash (:hash latest)
+                      ;index 1 
+                      ;data "teste2"
+                      ;prevHash "0000fde84543a0aafb689c37c635d2e3f242e09b235f86af27036de1bd9bd93c"
+                      nonce (noncer index data prevHash)
+                      hash (hasher index data prevHash nonce)]
+                      (as-json {:nonce nonce :hash hash})))
+  (POST "/transaction" req (add-transaction (:body req)))
+  (POST "/addBlock" req
+    (let [body (:body req)
+          nonce (:nonce body)
+          hash (:hash body)]
+      (create-new-block nonce hash)))
   (route/not-found "Not Found"))
+
 
 (def app
   (-> (wrap-defaults app-routes api-defaults)
-  (wrap-json-body{:keywords? true :bigdecimals? true})))
+      (wrap-json-body {:keywords? true :bigdecimals? true})))
 
-;; ;o que o programa deve fazer ao acessar certa URL
-;; (defroutes app-routes ;é uma macro de compojure.core
-;;   ;rotas tratadas:
-;;   (GET "/" [] "Oi, mundo!") ;raiz
-;;   (GET "/saldo" [] (como-json {:saldo (db/saldo)})) ;saldo
-;;   (POST "/transacoes" requisicao (-> ;transações
-;;     (db/registrar (:body requisicao))
-;;     (como-json 201)))
 
-;;   (GET "/transacoes" [] (como-json {:transacoes (db/transacoes)}))
 
-;;   ;ao acessar uma rota não tratada
-;;   (route/not-found "Recurso n encontrado")
-;; )
-;; ;;
-;; ;; APP
-;; (def app
-;;   (-> (wrap-defaults app-routes api-defaults)
-;;   (wrap-json-body{:keywords? true :bigdecimals? true})))
-;; ;;
+
+
+
