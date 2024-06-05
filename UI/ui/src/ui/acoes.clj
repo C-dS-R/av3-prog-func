@@ -64,9 +64,37 @@
 
 ;
 (defn registrarTransacoes []
-	(limparTerminal) ;limpa terminal
+  (limparTerminal) ; Limpa terminal
+  (println "(DEBUG) registrar transacoes")
 
-	(println "(DEBUG) registrar transacoes"))
+  ;; Obtém transações
+  (let [transacoes-response (http/get (str "http://localhost:" portaGF "/transacao")
+                                      {:content-type :json})
+        transacoes (parse-string (:body transacoes-response) true)]
+    (println "(DEBUG) transacoes obtidas" transacoes)
+
+	
+    ;; Envia transações para buffer
+    (let [reqresp (http/post (str "http://localhost:" portaBC "/transaction")
+                             {:form-params transacoes
+                              :content-type :json})]
+      (println "(DEBUG) transacoes enviadas" (:body reqresp)))
+
+
+    ;; Obtém nonce e hash
+    (let [nonce-hash-response (http/get (str "http://localhost:" portaBC "/mineTest")
+                                        {:content-type :json})
+          nonce-hash (parse-string (:body nonce-hash-response) true)
+          nonce (:nonce nonce-hash)
+          hash (:hash nonce-hash)]
+      (println "(DEBUG) nonce e hash recebidos" nonce hash)
+
+      ;; Adiciona novo bloco
+      (let [result-response (http/post (str "http://localhost:" portaBC "/addBlock")
+                                       {:form-params {:nonce nonce :hash hash}
+                                        :content-type :json})]
+        (println "(DEBUG) resultado da requisição final" (:body result-response))))))
+	
 ;;
 
 
