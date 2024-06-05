@@ -19,7 +19,7 @@
 (def portaGF 3000)
 (def portaBC 4500)
 (defn mostrarTransacao [transacao n]
-	(println (str "TRANSACAO " n ":\nValor: " (subs (nth transacao 0) 8) "\nTipo: " (subs (nth transacao 1) 8 (dec (count (nth transacao 1))))))
+	(println (str "TRANSACAO " (inc n) ":\nValor: " (subs (nth transacao 0) 8) "\nTipo: " (subs (nth transacao 1) 8 (dec (count (nth transacao 1)))) "\n"))
 )
 
 ;;ACOES
@@ -50,11 +50,9 @@
 			{:query-params {:valor :tipo} :content-type :json}))]
 		(let [transacoes (parse-string(subs (str transacoes) 13 (dec (count transacoes))))]
 			(let [transacoes (map (fn[S](split (subs (str S) 1 (dec (count (str S)))) #", ")) transacoes)]
-				;(prepMostrarTransacao (nth transacoes 0))
-				(println (count transacoes))
-				(doall (map (fn[x](
+				(doall (map (fn[x]
 					(mostrarTransacao (nth transacoes x) x)
-				)) (range (count transacoes))))
+				) (range (count transacoes))))
 			)
 		)
 	)
