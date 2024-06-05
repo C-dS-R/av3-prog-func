@@ -9,7 +9,8 @@
                  [ring/ring-json "0.4.0"]
                  [clj-http "3.9.1"]]
   :plugins [[lein-ring "0.12.5"]]
-  :ring {:handler financeiro.handler/app}
+  :ring {:handler financeiro.handler/app
+         :port 3000}
   :profiles
   {:dev {:dependencies [[javax.servlet/servlet-api "2.5"]
                         [ring/ring-mock "0.3.2"]
