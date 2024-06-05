@@ -5,9 +5,9 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [
     [org.clojure/clojure "1.11.1"]
-    ;[org.clojure/tools.cli "0.4.1"]
+    [org.clojure/tools.cli "0.4.1"]
     [clj-http "3.13.0"]
-    ;[cheshire "5.13.0"]
+    [cheshire "5.13.0"]
     ]
   :main ^:skip-aot ui.core
   :target-path "target/%s"
