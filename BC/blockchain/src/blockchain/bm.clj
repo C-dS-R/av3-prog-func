@@ -22,5 +22,5 @@
   (loop [counter 0]
     (let [hash (calculate-hash index data prev-hash counter)]
       (if (valid-hash? hash)
-        counter
+        [counter hash]
         (recur (inc counter))))))

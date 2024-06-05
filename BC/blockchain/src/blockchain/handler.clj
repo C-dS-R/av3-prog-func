@@ -17,9 +17,10 @@
 
 (def transactions (atom []))
 
+
 (defn add-transaction [transaction]
   (swap! transactions conj transaction)
-  {:status 201 :body "Transaction added"})
+  (as-json transaction 201))
 
 (defn get-latest-block []
   (last @blockchain))
@@ -33,7 +34,7 @@
         nonce calcNonce
         hash calcHash] 
         (swap! blockchain conj (db/create-block index data prev-hash nonce hash))
-        {:status 201 :body "Block added"}))
+        (as-json {:index index :data data :prev-hash prev-hash :nonce nonce :hash hash} 201)))
 
 (def noncey 12345)
 (def hashy "0000123412341234")
@@ -48,16 +49,11 @@
   (GET "/" [] "Oi, mundo!")
   (GET "/chain" [] (as-json @blockchain))
   (GET "/mine" [] (let [nonce noncey hash hashy] (as-json {:nonce nonce :hash hash})))
-  (GET "/mineTest" [] (let[latest (get-latest-block) 
-                      trans (walk/stringify-keys @transactions)
+  (GET "/mineTest" [] (let[latest (get-latest-block)
                       index (inc (:index latest))
-                      data (str trans)
-                      prev-hash (:hash latest)
-                      ;index 1 
-                      ;data "teste2"
-                      ;prevHash "0000fde84543a0aafb689c37c635d2e3f242e09b235f86af27036de1bd9bd93c"
-                      nonce (noncer index data prevHash)
-                      hash (hasher index data prevHash nonce)]
+                      data (str @transactions)
+                      prevHash (:hash latest)
+                      [nonce hash] (noncer index data prevHash)]
                       (as-json {:nonce nonce :hash hash})))
   (POST "/transaction" req (add-transaction (:body req)))
   (POST "/addBlock" req
@@ -73,7 +69,9 @@
       (wrap-json-body {:keywords? true :bigdecimals? true})))
 
 
-
+;index 1 
+;data "teste2"
+;prevHash "0000fde84543a0aafb689c37c635d2e3f242e09b235f86af27036de1bd9bd93c"
 
 
 
