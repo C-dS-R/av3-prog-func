@@ -3,7 +3,7 @@
     (:require
 		;;dependencias
 		[clojure.tools.cli :refer [parse-opts]]
-        [cheshire.core :refer [parse-string generate-string]]
+        [cheshire.core :refer [parse-string]]
         [clj-http.client :as http]
 
 		;;nativas
