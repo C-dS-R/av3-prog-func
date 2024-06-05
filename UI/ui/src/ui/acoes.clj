@@ -77,7 +77,7 @@
 	(let [blockchain (:body (http/get (str "http://localhost:" portaBC "/chain")
 			{:query-params {:valor :tipo} :content-type :json}))]
 		(print blockchain))
-	
+
 
 
 ;;
