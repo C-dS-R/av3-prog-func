@@ -15,7 +15,7 @@
 
 (def blockchain (atom [(db/create-genesis)]))
 
-(def transactions (atom []))
+(def transactions (atom [])) ;atomo de transacoes
 
 
 (defn add-transaction [transaction]
@@ -34,7 +34,7 @@
         nonce calcNonce ; nonce do bloco vira o nonce calculado
         hash calcHash] ;hash do bloco vira o hash calculado
         (swap! blockchain conj (db/create-block index data prev-hash nonce hash)) ;da um swap
-        (reset! transactions [])
+        (reset! transactions []) ;para nao repetir transacoes na lista
         (as-json {:index index :data data :prev-hash prev-hash :nonce nonce :hash hash} 201))) ;responde tudo isso com um status 201 de sucesso
 
 (def noncey 12345)
@@ -67,7 +67,7 @@
 
 
 (def app
-  (-> (wrap-defaults app-routes api-defaults)
+  (-> (wrap-defaults app-routes api-defaults) ;wrapper para as rotas
       (wrap-json-body {:keywords? true :bigdecimals? true})))
 
 
