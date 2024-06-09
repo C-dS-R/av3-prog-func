@@ -34,6 +34,7 @@
         nonce calcNonce ; nonce do bloco vira o nonce calculado
         hash calcHash] ;hash do bloco vira o hash calculado
         (swap! blockchain conj (db/create-block index data prev-hash nonce hash)) ;da um swap
+        (reset! transactions [])
         (as-json {:index index :data data :prev-hash prev-hash :nonce nonce :hash hash} 201))) ;responde tudo isso com um status 201 de sucesso
 
 (def noncey 12345)

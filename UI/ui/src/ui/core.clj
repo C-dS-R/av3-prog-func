@@ -13,7 +13,7 @@
 	[& args]
 	;(exibirTransacoes)
 
-	mostra opcoes de ação e pede escolha do usuario
-	;(escolherAcao)
+	;mostra opcoes de ação e pede escolha do usuario
+	(escolherAcao)
 	)
 ;;
