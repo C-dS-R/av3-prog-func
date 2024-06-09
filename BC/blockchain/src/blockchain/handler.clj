@@ -4,7 +4,7 @@
             [cheshire.core :as json]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [ring.middleware.json :refer [wrap-json-body]]
-            [clojure.walk :as walk]
+            [clojure.walk :as walk] ;percorrer/transformar string/json..
             [blockchain.db :as db]
             [blockchain.bm :as bm]))
 
@@ -19,35 +19,35 @@
 
 
 (defn add-transaction [transaction]
-  (swap! transactions conj transaction)
+  (swap! transactions conj transaction) ;coloca transações na lista de transacoes
   (as-json transaction 201))
 
-(defn get-latest-block []
+(defn get-latest-block [] ;obtem ultimo bloco da lista
   (last @blockchain))
 
-(defn create-new-block [calcNonce calcHash]
+(defn create-new-block [calcNonce calcHash] ;recebe nonce e hash
   (let [latest (get-latest-block)
-        trans (walk/stringify-keys @transactions)
-        index (inc (:index latest))
-        data (str trans)  
-        prev-hash (:hash latest)
-        nonce calcNonce
-        hash calcHash] 
-        (swap! blockchain conj (db/create-block index data prev-hash nonce hash))
-        (as-json {:index index :data data :prev-hash prev-hash :nonce nonce :hash hash} 201)))
+        trans (walk/stringify-keys @transactions) ;stringifica todas as transacoes
+        index (inc (:index latest)) ;indice do novo bloco (1+id anterior)
+        data (str trans)
+        prev-hash (:hash latest) ;pega o hash do ultimo bloco
+        nonce calcNonce ; nonce do bloco vira o nonce calculado
+        hash calcHash] ;hash do bloco vira o hash calculado
+        (swap! blockchain conj (db/create-block index data prev-hash nonce hash)) ;da um swap
+        (as-json {:index index :data data :prev-hash prev-hash :nonce nonce :hash hash} 201))) ;responde tudo isso com um status 201 de sucesso
 
 (def noncey 12345)
 (def hashy "0000123412341234")
 
-(defn noncer[index data prevHash]
+(defn noncer[index data prevHash] ;chamada pra calcular nonce
   (bm/mineBlock index data prevHash))
 (defn hasher[index data prevHash nonce]
   (bm/calculate-hash index data prevHash nonce))
 
 ;index data prevHash
-(defroutes app-routes
-  (GET "/" [] "Oi, mundo!")
-  (GET "/chain" [] (as-json @blockchain))
+(defroutes app-routes ;rotas
+  (GET "/" [] "Oi, mundo!") ;rota raiz
+  (GET "/chain" [] (as-json @blockchain)) ;@blockchain == chamando atomo 'blockchain'
   (GET "/mine" [] (let [nonce noncey hash hashy] (as-json {:nonce nonce :hash hash})))
   (GET "/mineTest" [] (let[latest (get-latest-block)
                       index (inc (:index latest))
