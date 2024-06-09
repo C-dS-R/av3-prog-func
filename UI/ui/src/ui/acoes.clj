@@ -44,7 +44,6 @@
 ;
 (defn exibirTransacoes []
 	(limparTerminal) ;limpa terminal
-	(println "(DEBUG) exibir transacoes")
 
 	(let [transacoes (:body (http/get (str "http://localhost:" portaGF "/transacao")
 			{:query-params {:valor :tipo} :content-type :json}))]
@@ -80,7 +79,7 @@
 
 
     ;; Obtém nonce e hash
-    (let [nonce-hash-response (http/get (str "http://localhost:" portaBC "/mineTest")
+    (let [nonce-hash-response (http/get (str "http://localhost:" portaBC "/mine")
                                         {:content-type :json})
           nonce-hash (parse-string (:body nonce-hash-response) true)
           nonce (:nonce nonce-hash)
@@ -113,10 +112,3 @@
       (println (format-block block))
       (println "-----------------------------"))))
 
-;; (defn exibirBlockchain [] ;retorna infos do bloco
-;; 	(limparTerminal) ;limpa terminal
-;; 	(println "(DEBUG) exibir blockchain")
-;; 	(let [blockchain (:body (http/get (str "http://localhost:" portaBC "/chain")
-;; 			{:query-params {:valor :tipo} :content-type :json}))]
-;; 		(print blockchain))
-;; )
