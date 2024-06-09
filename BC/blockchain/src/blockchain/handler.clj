@@ -48,19 +48,20 @@
 (defroutes app-routes ;rotas
   (GET "/" [] "Oi, mundo!") ;rota raiz
   (GET "/chain" [] (as-json @blockchain)) ;@blockchain == chamando atomo 'blockchain'
-  (GET "/mine" [] (let [nonce noncey hash hashy] (as-json {:nonce nonce :hash hash})))
-  (GET "/mineTest" [] (let[latest (get-latest-block)
+  ;(GET "/mineTest" [] (let [nonce noncey hash hashy] (as-json {:nonce nonce :hash hash})))
+  (GET "/mine" [] (let[latest (get-latest-block) ;minera
                       index (inc (:index latest))
                       data (str @transactions)
                       prevHash (:hash latest)
                       [nonce hash] (noncer index data prevHash)]
                       (as-json {:nonce nonce :hash hash})))
-  (POST "/transaction" req (add-transaction (:body req)))
+  (POST "/transaction" req (add-transaction (:body req))) ;coloca transacao na lista de transacoes
   (POST "/addBlock" req
+    ;requer um nonce e um hash,
     (let [body (:body req)
           nonce (:nonce body)
           hash (:hash body)]
-      (create-new-block nonce hash)))
+      (create-new-block nonce hash))) ;entao cria um novo bloco com estes
   (route/not-found "Not Found"))
 
 
