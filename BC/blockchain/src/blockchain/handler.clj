@@ -34,6 +34,7 @@
         nonce calcNonce
         hash calcHash] 
         (swap! blockchain conj (db/create-block index data prev-hash nonce hash))
+        (reset! transactions [])
         (as-json {:index index :data data :prev-hash prev-hash :nonce nonce :hash hash} 201)))
 
 (def noncey 12345)
